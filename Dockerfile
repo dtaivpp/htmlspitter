@@ -32,7 +32,7 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     apt-get -qq update && \
     if [ "$BROWSER_VERSION" = "GOOGLE_CHROME_UNSTABLE" ]; then export BROWSER=google-chrome-unstable; \
     elif [ "$BROWSER_VERSION" = "GOOGLE_CHROME_STABLE" ]; then export BROWSER=google-chrome-stable; \
-    else export BROWSER=chromium-browser; fi && \
+    else export BROWSER=chromium; fi && \
     apt-get -qq install -y --no-install-recommends \
     ${BROWSER} fonts-ipafont-gothic \
     fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont && \
