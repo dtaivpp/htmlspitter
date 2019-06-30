@@ -10,7 +10,7 @@ RUN npm t
 RUN npm run build
 
 FROM node:${NODE_VERSION}-slim
-ARG GOOGLE_CHROME_UNSTABLE=yes
+ARG BROWSER_VERSION=GOOGLE_CHROME_UNSTABLE
 LABEL org.label-schema.schema-version="1.0.0-rc1" \
     maintainer="quentin.mcgaw@gmail.com" \
     org.label-schema.build-date=$BUILD_DATE \
@@ -30,9 +30,11 @@ EXPOSE 8000
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
     apt-get -qq update && \
-    if [ "$GOOGLE_CHROME_UNSTABLE" = "yes" ]; then export CHROME_EXT=unstable; else export CHROME_EXT=stable; fi && \
+    if [ "$BROWSER_VERSION" = "GOOGLE_CHROME_UNSTABLE" ]; then export BROWSER=google-chrome-unstable; \
+    elif [ "$BROWSER_VERSION" = "GOOGLE_CHROME_STABLE" ]; then export BROWSER=google-chrome-stable; \
+    else export BROWSER=chromium-browser; fi && \
     apt-get -qq install -y --no-install-recommends \
-    google-chrome-${CHROME_EXT} fonts-ipafont-gothic \
+    ${BROWSER} fonts-ipafont-gothic \
     fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont && \
     rm -rf /var/lib/apt/lists/*
 RUN groupadd -r chromium && \
@@ -41,7 +43,7 @@ RUN groupadd -r chromium && \
     chown -R chromium:chromium /home/chromium && \
     chown -R chromium:chromium /htmlspitter
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 \
-    CHROME_BIN=/usr/bin/google-chrome-unstable \
+    CHROME_BIN=/usr/bin/${BROWSER} \
     NODE_ENV=production
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=1 CMD [ "node", "./healthcheck.js" ]
 ENTRYPOINT [ "node", "./main.js" ]
