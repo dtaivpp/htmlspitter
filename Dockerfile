@@ -43,7 +43,7 @@ RUN groupadd -r chromium && \
     chown -R chromium:chromium /home/chromium && \
     chown -R chromium:chromium /htmlspitter
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 \
-    CHROME_BIN=/usr/bin/${BROWSER} \
+    CHROME_BIN=/usr/bin/chromium \
     NODE_ENV=production
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=1 CMD [ "node", "./healthcheck.js" ]
 ENTRYPOINT [ "node", "./main.js" ]
